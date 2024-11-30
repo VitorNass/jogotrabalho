@@ -1,5 +1,8 @@
 import pygame
 import random
+
+from pygame.freetype import SysFont
+
 pygame.init()
 
 x = 1280
@@ -33,9 +36,16 @@ vel_missil_x = 0
 pos_missil_x = 200
 pos_missil_y = 300
 
+pontos = 10
 
 triggered = False
 rodando = True
+
+#transformando imagem em objeto
+player_rect  = playerImg.get_rect()
+alien_rect  = alien.get_rect()
+missil_rect  = missil.get_rect()
+
 
 #funções
 def respawn():
@@ -48,6 +58,16 @@ def respawn_missil():
     respawn_missil_y = pos_player_y
     vel_missil_x = 0
     return [respawn_missil_x, respawn_missil_y, triggered, vel_missil_x]
+def colisions():
+    global pontos
+    if player_rect.colliderect(alien_rect) or alien_rect.x == 60:
+        pontos -=1
+        return True
+    elif missil_rect.colliderect(alien_rect):
+        pontos +=1
+        return True
+    else:
+        return False
 
 while rodando:
     for event in pygame.event.get():
@@ -60,16 +80,32 @@ while rodando:
     if rel_x < 1280:
         screen.blit(bg, (rel_x, 0))
 
+    #posição rect
+    player_rect.y = pos_player_y
+    player_rect.x = pos_player_x
+
+    missil_rect.y = pos_missil_y
+    missil_rect.x = pos_missil_x
+
+    alien_rect.y = pos_alien_y
+    alien_rect.x = pos_alien_x
+
     # controla velocidade de movimento da tela
     x-=2
     pos_alien_x -=1
     pos_missil_x += vel_missil_x
+
+    pygame.draw.rect(screen, (0, 0, 0), player_rect, 1)
+    pygame.draw.rect(screen, (0, 0, 0), missil_rect, 1)
+    pygame.draw.rect(screen, (0, 0, 0), alien_rect, 1)
 
     #criar imagens
     screen.blit(alien,(pos_alien_x, pos_alien_y))
     screen.blit(missil, (pos_missil_x, pos_missil_y))
     screen.blit(playerImg, (pos_player_x, pos_player_y))
     pygame.display.update()
+
+    print(pontos)
 
     #teclas
     tecla = pygame.key.get_pressed()
@@ -92,5 +128,6 @@ while rodando:
         pos_alien_y = respawn()[1]
     if pos_missil_x == 1300:
         pos_missil_x, pos_missil_y, triggered, vel_missil_x = respawn_missil()
-
-
+    if pos_alien_x == 50 or colisions():
+        pos_alien_x = respawn()[0]
+        pos_alien_y = respawn()[1]
