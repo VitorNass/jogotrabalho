@@ -5,10 +5,8 @@ import sys
 
 def resource_path(relative_path):
     try:
-        # Caminho quando executado como um .exe
         base_path = sys._MEIPASS
     except AttributeError:
-        # Caminho durante o desenvolvimento
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
@@ -38,7 +36,7 @@ playerImg = pygame.transform.scale(playerImg, (86, 39))  # conversão do tamanho
 playerImg = pygame.transform.rotate(playerImg, 360)
 
 missil = pygame.image.load(resource_path('asset/Enemy1Shot.png')).convert_alpha()
-missil = pygame.transform.scale(missil, (86, 39))  # conversão do tamanho da nave
+missil = pygame.transform.scale(missil, (86, 39))  # conversão do tamanho do missil
 missil = pygame.transform.rotate(missil, 360)
 
 # controle de posições GERAL
